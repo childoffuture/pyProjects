@@ -25,9 +25,9 @@ def initField():
                     if width >= lineSize or height >= lineSize:
                         print("Размер поля:", width, height)
                         field.clear()
-                        for i in range(width):
+                        for i in range(height):
                             row = []
-                            for j in range(height):
+                            for j in range(width):
                                 row.append('_')
                             field.append(row)
                         flag = True
