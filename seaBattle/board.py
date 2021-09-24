@@ -9,7 +9,7 @@ class Board:
     def __init__(self, show_ships = False):
         self.size = 6
         self.show_flag = show_ships
-        self.ships = []
+        self._ships = []
         self.field = [ [" "] * self.size for i in range(self.size) ]
 
     # Вернуть заголовок поля
@@ -48,40 +48,47 @@ class Board:
         if any(self.out(cell) for cell in new_ship.cells):
             raise my_exceptions.ShipPositionException
 
-        for existed_ship in self.ships:
+        for existed_ship in self._ships:
             if any(new_cell in existed_ship.cells + existed_ship.contour for new_cell in new_ship.cells):
                 raise my_exceptions.ShipPositionException
 
-        self.ships.append(new_ship)
+        self._ships.append(new_ship)
         if self.show_flag:
             for cell in new_ship.cells:
                 self.field[cell.row][cell.column] = "■"
 
+    # Возврат флага существования кораблей
+    @property
+    def ships_exist(self):
+        return bool(self._ships)
+
     # Обработка хода игрока
     def shot(self, cell):
-        result = ''
+        result = self.dict()[cell.column] + str(cell.row + 1)
         if self.out(cell):
             raise my_exceptions.BoardOutException
 
         if self.field[cell.row][cell.column] in ['X', 'O']:
             raise my_exceptions.DoubleShootException
 
-        for ship in self.ships:
+        success = False
+        for ship in self._ships:
             if cell in ship.cells:
                 self.field[cell.row][cell.column] = 'X'
                 ship.shot()
                 if ship.hp == 0:
-                    result = 'убит!'
-                    self.ships.remove(ship)
+                    result += " убит!"
+                    self._ships.remove(ship)
                     for contour_cell in ship.contour:
                         if not self.out(contour_cell):
                             self.field[contour_cell.row][contour_cell.column] = 'O'
                 else:
-                    result = 'ранен!'
-            else:
-                self.field[cell.row][cell.column] = 'O'
-                result = 'мимо!'
+                    result += " ранен!"
+                success = True
+                break
 
-        print("Выстрел ", self.dict()[cell.column], cell.row + 1, result)
+        if not success:
+            self.field[cell.row][cell.column] = 'O'
+            result += " мимо!"
 
-        return not self.ships
+        return result

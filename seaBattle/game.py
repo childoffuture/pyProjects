@@ -72,7 +72,9 @@ class Game:
         ai_board = self.gen_board(False)
         human_board = None
         while True:
-            print(" Выберите расстановку кораблей для игры. Введите Y если хотите начать игру с данной расстановкой")
+            print(" Выберите расстановку кораблей для игры.")
+            print(" Введите Y если хотите начать игру с данной расстановкой")
+            print(" или любой другой символ для смены расстановки")
             human_board = self.gen_board(True)
             print(human_board)
             print()
@@ -94,17 +96,28 @@ class Game:
     def print_boards(self, b1, b2):
         b1_lines = str(b1).split('\n')
         b2_lines = str(b2).split('\n')
+        header1 = (" Ваше поле:").ljust(len(b1_lines[1]), ' ')
+        header2 = (" Поле противника:").ljust(len(b1_lines[1]), ' ')
+        print(header1, ' '*5, header2)
         for b1_line, b2_line in zip(b1_lines, b2_lines):
             print(b1_line, ' '*5, b2_line)
 
     # Реализация ходов игрока
     def loop(self):
         for plr in self.gen():
+            system('clear')
             self.print_boards(self.players[0].player_board, self.players[0].enemy_board)
-            if not plr.move():
-                time.sleep(1)
+
+            result = ""
+            while result.find("мимо") == -1 and plr.enemy_board.ships_exist:
+                result = plr.move()
                 system('clear')
-            else:
-                print(plr.name, "Выиграл!")
-                print("Игра окончена")
+                self.print_boards(self.players[0].player_board, self.players[0].enemy_board)
+                print()
+                print(" Ходит", plr.name, ":", result)
+                time.sleep(1)
+
+            if not plr.enemy_board.ships_exist:
+                print("", plr.name, "Выиграл!")
+                print(" Игра окончена")
                 break

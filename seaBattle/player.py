@@ -16,11 +16,11 @@ class Player:
 
     # Метод, реализующий ход игрока
     def move(self):
-        game_finished = False
+        result = ""
         while True:
             try:
                 cell = self.ask()
-                game_finished = self._enemy_board.shot(cell)
+                result = self._enemy_board.shot(cell)
             except my_exceptions.BoardOutException as e:
                 print(e)
             except my_exceptions.DoubleShootException as e:
@@ -29,7 +29,8 @@ class Player:
                 print(e)
             else:
                 break
-        return game_finished
+
+        return result
 
     # Вернуть имя игрока
     @property
