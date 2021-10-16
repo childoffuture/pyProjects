@@ -1,0 +1,10 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+{{ flatpage.title }}
+{% endblock title %}
+
+{% block content %}
+<b>На этой странице изменен шрифт и размер контента (подчеркнутый курсив):</b>
+<h2><i><u>{{ flatpage.content }}</u></i></h2>
+{% endblock content %}
