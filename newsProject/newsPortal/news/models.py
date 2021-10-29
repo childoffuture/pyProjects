@@ -7,9 +7,9 @@ class Author(models.Model):
     id_user = models.OneToOneField(User, on_delete=models.CASCADE)
     rating = models.IntegerField()
 
-    def update_rating(self, name):
+    def update_rating(self):
         result = 0
-        user = User.objects.get(username=name)
+        user = self.id_user
 
         post_list = Post.objects.filter(id_author=self, type=Post.article)
 
@@ -26,7 +26,8 @@ class Author(models.Model):
             comment_in_post = Comment.objects.filter(id_post=post).values("rating")
             result += sum(item["rating"] for item in comment_in_post)
 
-        return result
+        self.rating = result
+        self.save()
 
 
 class Category(models.Model):
