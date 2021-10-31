@@ -1,0 +1,33 @@
+{% extends 'flatpages/default.html' %}
+
+{% load simpleapp_filters %}
+
+{% block title %}
+News
+{% endblock title %}
+
+{% block content %}
+    <h2><u>Новости портала</u></h2>
+<!--    <h3>{{ time_now }}</h3> -->
+    {% if news %}
+        <ul>
+        {% for record in news %}
+            <hr>
+            <li>
+                <p>
+                    <a class="nav-link" href="/news/{{ record.pk }}">{{ record.title|censor }}</a>
+                </p>
+                <p>
+                    {{ record.created }}
+                </p>
+                <p>
+                    {{ record.text|truncatechars:50|censor }}
+                </p>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <h3>Новостей нет =(</h3>
+    {% endif %}
+
+{% endblock content %}
