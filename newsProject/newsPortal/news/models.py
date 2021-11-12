@@ -29,10 +29,15 @@ class Author(models.Model):
         self.rating = result
         self.save()
 
+    def __str__(self):
+        return self.id_user.username
+
 
 class Category(models.Model):
     name = models.CharField(max_length=128, unique=True)
 
+    def __str__(self):
+        return self.name
 
 class Post(models.Model):
     article = "AR"
@@ -45,7 +50,7 @@ class Post(models.Model):
     id_post_category = models.ManyToManyField(Category, through="PostCategory")
     header = models.CharField(max_length=255)
     text = models.TextField()
-    rating = models.IntegerField()
+    rating = models.IntegerField(default=0)
 
     def like(self):
         self.rating += 1
@@ -58,6 +63,10 @@ class Post(models.Model):
     def preview(self):
         result = self.text[:124] + "..."
         return result
+
+    def get_absolute_url(self):
+        return f'/post/{self.id}'
+
 
 class PostCategory(models.Model):
     id_post = models.ForeignKey(Post, on_delete=models.CASCADE)
