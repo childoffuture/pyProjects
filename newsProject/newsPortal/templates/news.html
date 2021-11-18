@@ -7,7 +7,15 @@ Post
 {% endblock title %}
 
 {% block content %}
-    <h2><u>Новости портала</u></h2>
+    {% if request.user.is_authenticated %}
+        {% if is_not_author %}
+        <p align="right"> <button> <a class="nav-link" href="/sign/author/">Стать автором</a> </button> </p>
+        {% else %}
+        <p align="right">Пользователь является автором новостей</p>
+        {% endif %}
+
+    {% endif %}
+    <h3>Последние публикации</h3>
     <br>
     {% if postList %}
         <ul>
@@ -15,7 +23,7 @@ Post
             <hr>
             <li>
                 <p align="left">
-                    {{ record.created }}<br>{{ record.id_author }}
+                    Дата публикации: {{ record.created }}<br>Автор: {{ record.id_author }}
                 </p>
                 <p>
                     <a class="nav-link" href="/post/{{ record.pk }}">{{ record.header|censor }}</a>
@@ -26,7 +34,6 @@ Post
             </li>
         {% endfor %}
         </ul>
-
         <hr>
         {% if is_paginated %}
             {% if page_obj.has_previous %}
