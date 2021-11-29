@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 # Create your models here.
 class Author(models.Model):
     id_user = models.OneToOneField(User, on_delete=models.CASCADE)
-    rating = models.IntegerField()
+    rating = models.IntegerField(default=0)
 
     def update_rating(self):
         result = 0
@@ -35,9 +35,20 @@ class Author(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=128, unique=True)
+    subscribers = models.ManyToManyField(User, through="CategorySubscribers")
 
     def __str__(self):
         return self.name
+
+    @property
+    def is_subscribed(self):
+        return CategorySubscribers.objects.filter(id_category=self.pk).exists()
+
+
+class CategorySubscribers(models.Model):
+    id_user = models.ForeignKey(User, on_delete=models.CASCADE)
+    id_category = models.ForeignKey(Category, on_delete=models.CASCADE)
+
 
 class Post(models.Model):
     article = "AR"
