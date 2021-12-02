@@ -3,11 +3,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from .models import Post, Author, Category, CategorySubscribers, PostCategory
 from .filters import PostFilter
 from django.contrib.auth.decorators import login_required
-from .forms import CreatePostForm, BasePostForm
-
-from django.shortcuts import redirect
-from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
+from .forms import CreatePostForm, BasePostForm
+from .tasks import new_post_notification
+from django.shortcuts import redirect
 
 
 class PostList(ListView):
@@ -60,16 +59,12 @@ class PostCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
             postCategory = PostCategory(id_post=post, id_category=Category.objects.get(pk=id))
             postCategory.save()
 
-        html_content = render_to_string('post_created.html', { 'post': post, })
+        subject = f'{post.created.strftime("%Y-%M-%d")} вами создана новая новость!'
+        content = render_to_string('post_created.html', {'post': post, })
+        email = request.user.email
 
-        msg = EmailMultiAlternatives(
-            subject=f'{post.created.strftime("%Y-%M-%d")} вами создана новая новость!',
-            body=post.text,
-            from_email='pyataevfamily@yandex.ru',
-            to=['dimp89@mail.ru'],
-        )
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
+        # Отправка уведомлений о новой статье через Celery
+        new_post_notification.delay(subject, email, content)
 
         return redirect('/news/')
 
