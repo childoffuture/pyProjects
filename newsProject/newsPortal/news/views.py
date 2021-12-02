@@ -66,7 +66,7 @@ class PostCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
             subject=f'{post.created.strftime("%Y-%M-%d")} вами создана новая новость!',
             body=post.text,
             from_email='pyataevfamily@yandex.ru',
-            to=['dimp89@mail.ru'],
+            to=[request.user.email],
         )
         msg.attach_alternative(html_content, "text/html")
         msg.send()
