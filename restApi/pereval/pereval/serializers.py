@@ -3,11 +3,14 @@ from rest_framework import serializers
 
 
 class PerevalSerializer(serializers.ModelSerializer):
+    raw_data = serializers.JSONField()
+    images = serializers.JSONField()
+
     class Meta:
-        model = PerevalAdded
+        model = Pereval
         fields = ['raw_data', 'images']
 
     def create(self, validated_data):
-        pereval = PerevalAdded.objects.update_or_create(**validated_data)
-        print("create pereval")
-        return pereval
+        test = Pereval(raw_data=validated_data, images=validated_data['images'])
+        test.save()
+        return test

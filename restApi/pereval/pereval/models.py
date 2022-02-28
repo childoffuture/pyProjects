@@ -1,15 +1,5 @@
 from django.db import models
 
-
-class PerevalAdded(models.Model):
-    date_added = models.DateTimeField(blank=True, null=True)
-    raw_data = models.TextField(blank=True, null=True)  # This field type is a guess.
-    images = models.TextField(blank=True, null=True)  # This field type is a guess.
-
-    class Meta:
-        db_table = 'pereval_added'
-
-
 class PerevalAreas(models.Model):
     id = models.BigAutoField(primary_key=True)
     id_parent = models.BigIntegerField()
@@ -25,3 +15,13 @@ class PerevalImages(models.Model):
 
     class Meta:
         db_table = 'pereval_images'
+
+
+class Pereval(models.Model):
+    date_added = models.DateTimeField(blank=True, null=True)
+    raw_data = models.JSONField(blank=True)
+    images = models.JSONField(blank=True)
+    status = models.TextField(max_length=20, default='new')
+
+    class Meta:
+        db_table = 'pereval_added'
