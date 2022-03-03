@@ -7,16 +7,15 @@ from .models import *
 
 class PerevalView(APIView):
 
-#    def get(self, request):
-#        queryset = Pereval.objects.all()
-#        serializer = PerevalSerializer(queryset, many=True)
-#        #print("get", json.dumps(serializer))
-#        return Response(serializer.data)
+    def get(self, request):
+        queryset = Pereval.objects.all()
+        serializer = PerevalSerializer(queryset, many=True)
+        return Response(serializer.data)
 
     def post(self, request):
-        result = PerevalSerializer(data=request.data)
-        if result.is_valid():
-            result.save()
-            return Response(status=201)
+        serializer = PerevalSerializer(data=request.data)
+        if serializer.is_valid():
+            pereval = serializer.save()
+            return Response(f'pereval added. New id {pereval.pk}', status=200)
         else:
-            return Response(status=503)
+            return Response(serializer.errors, status=400)

@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class PerevalAreas(models.Model):
     id = models.BigAutoField(primary_key=True)
     id_parent = models.BigIntegerField()
