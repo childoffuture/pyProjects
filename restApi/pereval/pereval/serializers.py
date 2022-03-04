@@ -5,6 +5,7 @@ from datetime import datetime
 
 
 class PerevalSerializer(serializers.Serializer):
+    pereval_id = serializers.IntegerField()
     beautyTitle = serializers.CharField()
     title = serializers.CharField()
     other_titles = serializers.CharField()
@@ -22,7 +23,7 @@ class PerevalSerializer(serializers.Serializer):
         return raw_data
 
     def create(self, validated_data):
-        lst = ['beautyTitle', 'title', 'other_titles', 'connect', 'user', 'coords', 'type', 'level']
+        lst = ['beautyTitle', 'title', 'other_titles', 'connect', 'pereval_id', 'user', 'coords', 'type', 'level']
         raw_data = {}
         for name in lst:
             raw_data[name] = validated_data.pop(name)
@@ -31,3 +32,15 @@ class PerevalSerializer(serializers.Serializer):
                           images=validated_data.pop('images'))
         pereval.save()
         return pereval
+
+    def update(self, instance, validated_data):
+        lst = ['beautyTitle', 'title', 'other_titles', 'connect', 'pereval_id', 'coords', 'type', 'level']
+        raw_data = {}
+        for name in lst:
+            raw_data[name] = validated_data.pop(name)
+
+        instance.date_added = validated_data.pop('add_time', datetime.now())
+        instance.raw_data = raw_data,
+        instance.images = validated_data.pop('images')
+        instance.save()
+        return instance
