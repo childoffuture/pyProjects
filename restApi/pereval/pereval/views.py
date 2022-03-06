@@ -6,13 +6,17 @@ from .models import *
 
 
 class PerevalRecordView(APIView):
-
+    """
+    Класс для просмотра и редактирования конкретной записи. Обрабатывает команды GET и PUT
+    Вызывается по ссылке http://.../submitData/<int:pk>/
+    """
     def get(self, request, pk):
         if Pereval.objects.filter(id=pk).exists():
             pereval = Pereval.objects.get(id=pk)
             return Response(self.prepare_result(pereval))
         else:
-            return Response('Record not found', status=503)
+            result = {"status": "503", "message": "Record not found"}
+            return Response(result, status=503)
 
     def put(self, request, pk):
         if Pereval.objects.filter(id=pk).exists():
@@ -20,28 +24,40 @@ class PerevalRecordView(APIView):
             serializer = PerevalSerializer(pereval, data=request.data)
             if serializer.is_valid():
                 pereval = serializer.save()
-                return Response(f'pereval updated. Id {pereval.pk}', status=200)
+                result = {"status": "200", "message": f'pereval updated. Id {pereval.pk}'}
+                return Response(result, status=200)
             else:
-                return Response(serializer.errors, status=400)
+                result = {"status": "400", "message": f'{serializer.errors}'}
+                return Response(result, status=400)
         else:
-            return Response('Record not found', status=503)
+            result = {"status": "503", "message": "Record not found"}
+            return Response(result, status=503)
 
+    # Метод для подготовки ответа на GET-запрос
     def prepare_result(self, pereval):
         serializer = PerevalSerializer(pereval, many=False)
         return serializer.data
 
 
 class PerevalStatusView(PerevalRecordView):
-
+    """
+    Наследник класса PerevalRecordView. Обрабатывает GET-запрос статуса записи
+    Вызывается по ссылке http://.../submitData/<int:pk>/status
+    """
     def prepare_result(self, pereval):
-        return f'status: {pereval.status}'
+        result = {"status": f'{pereval.status}'}
+        return result
 
 
 class PerevalView(APIView):
-
+    """
+    Класс для просмотра и добавления новых записей
+    Вызывается по ссылке http://.../submitData/
+    Отображает записи зарегестрированного пользователя (имя берется из request)
+    """
     def get(self, request):
-        # username = 'vpupkin' # for test
-        username = request.user.username
+        username = 'vpupkin' # for test
+        #username = request.user.username
         queryset = Pereval.objects.filter(raw_data__user__contains={'id': username})
         serializer = PerevalSerializer(queryset, many=True)
         return Response(serializer.data)
@@ -50,6 +66,8 @@ class PerevalView(APIView):
         serializer = PerevalSerializer(data=request.data)
         if serializer.is_valid():
             pereval = serializer.save()
-            return Response(f'pereval added. New id {pereval.pk}', status=200)
+            result = {"status": "200", "message": f'pereval added. New Id {pereval.pk}'}
+            return Response(result, status=200)
         else:
-            return Response(serializer.errors, status=400)
+            result = {"status": "400", "message": f'{serializer.errors}'}
+            return Response(result, status=400)
