@@ -56,8 +56,8 @@ class PerevalView(APIView):
     Отображает записи зарегестрированного пользователя (имя берется из request)
     """
     def get(self, request):
-        username = 'vpupkin' # for test
-        #username = request.user.username
+        # username = 'vpupkin' # for test
+        username = request.user.username
         queryset = Pereval.objects.filter(raw_data__user__contains={'id': username})
         serializer = PerevalSerializer(queryset, many=True)
         return Response(serializer.data)
