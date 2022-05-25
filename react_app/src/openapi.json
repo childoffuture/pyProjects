@@ -1,0 +1,47 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Документация Swagger",
+    "version": "1.0"
+  },
+  "paths": {
+    "/category/": {
+      "summary": "Категория блюд",
+      "get": {
+        "summary": "Возвращает блюда категории id",
+        "description": "",
+        "operationId": "id",
+        "responses": {
+          "default": {
+            "description": "Default error sample response"
+          }
+        }
+      }
+    },
+    "/dish/": {
+      "summary": "Блюда указанной категории",
+      "get": {
+        "summary": "Вернуть блюдо по ключу id",
+        "description": "",
+        "operationId": "",
+        "responses": {
+          "default": {
+            "description": "Default error sample response"
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8000",
+      "variables": {},
+      "description": "Сервер DjangoRestFramework"
+    },
+    {
+      "url": "http://127.0.0.1:3000/",
+      "variables": {},
+      "description": "Приложение ReactApp"
+    }
+  ]
+}
